@@ -25,7 +25,7 @@ const fetchItems = async (url: string): Promise<NewItem[] | undefined> => {
       isOpened: !element.parent_id,
       isClicked: false,
       isDeepest: false,
-      level: 0,
+      level: 1,
     }));
 
     return newData;
@@ -63,5 +63,16 @@ const closeMenu = (event: MouseEvent): void => {
 };
 </script>
 <template>
-  <MenuItems :openChildMenu="openChildMenu" :closeMenu="closeMenu" :filteredItems="filteredItems" />
+  <v-toolbar color="cyan-lighten-1">
+      <v-btn icon="mdi-menu" variant="text"></v-btn>
+      <v-toolbar-title>List OF titiles</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon="mdi-magnify" variant="text"></v-btn>
+    </v-toolbar>
+    <template v-if="loading">
+      <v-progress-circular class="mx-10 py-10" indeterminate></v-progress-circular>
+    </template>
+    <template v-else>
+      <MenuItems :openChildMenu="openChildMenu" :closeMenu="closeMenu" :filteredItems="filteredItems" :loading="loading" />
+    </template>
 </template>

@@ -5,6 +5,7 @@ import { NewItem } from "../types/interfaces";
 const props = withDefaults(
   defineProps<{
     filteredItems: NewItem[];
+    loading: boolean;
     openChildMenu?: (event: MouseEvent) => void;
     closeMenu?: (event: MouseEvent) => void;
   }>(),
@@ -12,17 +13,18 @@ const props = withDefaults(
 );
 </script>
 <template>
-  <ul>
-    <li
+  <v-list lines="one">
+    <v-list-item
+    class="primary"
       v-for="(item, index) in props.filteredItems"
       :style="{ paddingLeft: 20 * item.level + 'px',
-       backgroundColor: item.parent_id === null ? 'grey' : (index % 2 ? 'rgba(108, 198, 201, 0.404)' : 'white')
+       backgroundColor: item.parent_id === null ? 'grey' : (index % 2 ? 'white' : 'rgba(108, 198, 201, 0.404)')
        }"
     >
       <v-btn
         v-if="!item.isDeepest"
         @click="
-          (event) => (!item.isClicked ? openChildMenu(event) : closeMenu(event))
+          (event: MouseEvent) => (!item.isClicked ? openChildMenu(event) : closeMenu(event))
         "
         density="compact"
         :id="item.id"
@@ -46,6 +48,6 @@ const props = withDefaults(
         <span>-</span>
       </v-btn>
       <span :class="item.parent_id === null && 'text-white'">{{ item.title }}</span>
-    </li>
-  </ul>
+    </v-list-item>
+  </v-list>
 </template>
