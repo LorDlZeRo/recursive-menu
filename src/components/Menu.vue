@@ -41,9 +41,9 @@ const openChildMenu = (event: MouseEvent): void => {
   const dataIndex = target.getAttribute("data-index") || "0";
   const dataLevel = parseInt(target.getAttribute("data-level") ?? "0");
 
-  const data = filterDataById(items.value, id);
-  const hasChildren = setIsDeepest(data, items.value);
-  const dataWithLevel = setLevel(hasChildren, dataLevel);
+  const fileteredData = filterDataById(items.value, id);
+  const dataWithIsDeepestFlag = setIsDeepest(fileteredData, items.value);
+  const dataWithLevel = setLevel(dataWithIsDeepestFlag, dataLevel);
 
   filteredItems.value.splice(parseInt(dataIndex) + 1, 0, ...dataWithLevel);
   filteredItems.value = setIsClicked(filteredItems.value, id);
