@@ -1,11 +1,23 @@
-import { NewItem } from "../types/interfaces";
+import { NewItem, Item } from "../types/interfaces";
 
-export const deleteRelatedElementsById = (
-  data: NewItem[],
-  id: string | number
-): NewItem[] => {
+export const addAdditionalProperties = <T extends Item[], U extends NewItem[]>  (data: T): U => {
+    const newData = data.map((element) => ({
+      ...element,
+      isOpened: !element.parent_id,
+      isClicked: false,
+      isDeepest: false,
+      level: 1,
+    }));
+
+return newData as U
+}
+
+export const deleteRelatedElementsById = <T extends NewItem, U extends string | number> (
+  data: T[],
+  id: U
+): T[] => {
   const markedForDeletion: (string | number)[] = [];
-  const findDescendants = (dataArray: NewItem[], parentId: string | number) => {
+  const findDescendants = <Z extends string | number> (dataArray: T[], parentId: Z): void => {
     const children = dataArray.filter(element => element.parent_id === parentId);
 
     children.forEach(child => {
@@ -15,10 +27,10 @@ export const deleteRelatedElementsById = (
   };
   findDescendants(data, id);
   const filteredData = data.filter(element => !markedForDeletion.includes(element.id));
-  return filteredData;
+  return filteredData as T[];
 };
 
-export const getDataById = <
+export const filterDataById = <
   T extends NewItem[],
   U extends string | number | null
 >(
@@ -26,12 +38,12 @@ export const getDataById = <
   id: U
 ): T => data.filter((element) => element.parent_id === id) as T;
 
-export const setHasChildrenTrue = <T extends NewItem[]>(
+export const setIsDeepest = <T extends NewItem[]>(
   filteredItems: T,
   allItems: T
 ): T => {
   return filteredItems.map((element) => {
-    const children = getDataById(allItems, element.id);
+    const children = filterDataById(allItems, element.id);
     if (children.length > 0) {
       return { ...element, isDeepest: false };
     }
@@ -47,7 +59,7 @@ export const setLevel = <T extends NewItem[]>(data: T, level: number): T => {
   return dataWithLevel as T;
 };
 
-export const setClickedTrue = <T extends NewItem[], U extends string | number>(
+export const setClicked = <T extends NewItem[], U extends string | number>(
   data: T,
   id: U
 ): T => {

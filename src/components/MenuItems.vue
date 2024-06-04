@@ -1,16 +1,11 @@
-<script setup lang="ts">
-import { withDefaults } from "vue";
+<script setup lang="ts" generic="T extends NewItem">
 import { NewItem } from "../types/interfaces";
 
-const props = withDefaults(
-  defineProps<{
-    filteredItems: NewItem[];
-    loading: boolean;
+const props = defineProps<{
+    filteredItems: T[];
     openChildMenu?: (event: MouseEvent) => void;
     closeMenu?: (event: MouseEvent) => void;
-  }>(),
-  {}
-);
+  }>();
 </script>
 <template>
   <v-list lines="one">
@@ -24,7 +19,7 @@ const props = withDefaults(
       <v-btn
         v-if="!item.isDeepest"
         @click="
-          (event: MouseEvent) => (!item.isClicked ? openChildMenu(event) : closeMenu(event))
+          (event: MouseEvent): void => (!item.isClicked ? openChildMenu(event) : closeMenu(event))
         "
         density="compact"
         :id="item.id"

@@ -1,34 +1,25 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends NewItem, U extends Item">
 import { Ref, ref, onMounted } from "vue";
 import axios from "axios";
-import { NewItem } from "../types/interfaces";
+import { NewItem, Item } from "../types/interfaces";
 import {
+  addAdditionalProperties,
   deleteRelatedElementsById,
-  getDataById,
-  setHasChildrenTrue,
+  filterDataById,
+  setIsDeepest,
   setLevel,
-  setClickedTrue,
+  setClicked,
 } from "../helpers/helpers";
 
 const url: string = "https://64b4c8450efb99d862694609.mockapi.io/tree/items";
 const loading: Ref<boolean> = ref(true);
-const items: Ref<NewItem[]> = ref([]);
+const items: Ref<T[]> = ref([]);
 const error: Ref<string | null> = ref(null);
-const filteredItems: Ref<NewItem[]> = ref([]);
+const filteredItems: Ref<T[] | []> = ref([]);
 
-const fetchItems = async (url: string): Promise<NewItem[] | undefined> => {
+const fetchItems = async (url: string): Promise<U[] | undefined> => {
   try {
-    const response = await axios.get<NewItem[]>(url);
-
-    const newData = response.data.map((element) => ({
-      ...element,
-      isOpened: !element.parent_id,
-      isClicked: false,
-      isDeepest: false,
-      level: 1,
-    }));
-
-    return newData as NewItem[];
+    return (await axios.get<U[]>(url)).data;
   } catch (err) {
     error.value = "Ошибка при загрузке данных";
   } finally {
@@ -37,8 +28,11 @@ const fetchItems = async (url: string): Promise<NewItem[] | undefined> => {
 };
 
 onMounted(async () => {
-  items.value = await fetchItems(url);
-  filteredItems.value = getDataById(items.value, null);
+  const responseData = await fetchItems(url);  
+  if (responseData) {
+    items.value = addAdditionalProperties(responseData);
+    filteredItems.value = filterDataById(items.value, null);
+  }
 });
 
 const openChildMenu = (event: MouseEvent): void => {
@@ -47,19 +41,19 @@ const openChildMenu = (event: MouseEvent): void => {
   const dataIndex = target.getAttribute("data-index") || "0";
   const dataLevel = parseInt(target.getAttribute("data-level") ?? "0");
 
-  const data = getDataById(items.value, id);
-  const hasChildren = setHasChildrenTrue(data, items.value);
+  const data = filterDataById(items.value, id);
+  const hasChildren = setIsDeepest(data, items.value);
   const dataWithLevel = setLevel(hasChildren, dataLevel);
 
   filteredItems.value.splice(parseInt(dataIndex) + 1, 0, ...dataWithLevel);
-  filteredItems.value = setClickedTrue(filteredItems.value, id);
+  filteredItems.value = setClicked(filteredItems.value, id);
 };
 
 const closeMenu = (event: MouseEvent): void => {
   const target = event.currentTarget as HTMLButtonElement;
   const { id } = target;
   filteredItems.value = deleteRelatedElementsById(filteredItems.value, id);
-  filteredItems.value = setClickedTrue(filteredItems.value, id);
+  filteredItems.value = setClicked(filteredItems.value, id);
 };
 </script>
 <template>
