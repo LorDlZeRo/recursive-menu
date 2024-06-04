@@ -28,7 +28,7 @@ const fetchItems = async (url: string): Promise<NewItem[] | undefined> => {
       level: 1,
     }));
 
-    return newData;
+    return newData as NewItem[];
   } catch (err) {
     error.value = "Ошибка при загрузке данных";
   } finally {
