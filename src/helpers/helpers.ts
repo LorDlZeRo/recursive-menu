@@ -59,7 +59,7 @@ export const setLevel = <T extends NewItem[]>(data: T, level: number): T => {
   return dataWithLevel as T;
 };
 
-export const setClicked = <T extends NewItem[], U extends string | number>(
+export const setIsClicked = <T extends NewItem[], U extends string | number>(
   data: T,
   id: U
 ): T => {

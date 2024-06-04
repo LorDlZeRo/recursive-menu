@@ -8,7 +8,7 @@ import {
   filterDataById,
   setIsDeepest,
   setLevel,
-  setClicked,
+  setIsClicked,
 } from "../helpers/helpers";
 
 const url: string = "https://64b4c8450efb99d862694609.mockapi.io/tree/items";
@@ -46,14 +46,14 @@ const openChildMenu = (event: MouseEvent): void => {
   const dataWithLevel = setLevel(hasChildren, dataLevel);
 
   filteredItems.value.splice(parseInt(dataIndex) + 1, 0, ...dataWithLevel);
-  filteredItems.value = setClicked(filteredItems.value, id);
+  filteredItems.value = setIsClicked(filteredItems.value, id);
 };
 
 const closeMenu = (event: MouseEvent): void => {
   const target = event.currentTarget as HTMLButtonElement;
   const { id } = target;
   filteredItems.value = deleteRelatedElementsById(filteredItems.value, id);
-  filteredItems.value = setClicked(filteredItems.value, id);
+  filteredItems.value = setIsClicked(filteredItems.value, id);
 };
 </script>
 <template>
