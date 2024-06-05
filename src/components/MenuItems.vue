@@ -13,7 +13,8 @@ const props = defineProps<{
     class="primary"
       v-for="(item, index) in props.filteredItems"
       :style="{ paddingLeft: 20 * item.level + 'px',
-       backgroundColor: item.parent_id === null ? 'grey' : (index % 2 ? 'white' : 'rgba(108, 198, 201, 0.404)')
+       backgroundColor: item.parent_id === null ? 'grey' : (index % 2 ? 'white' : 'rgba(108, 198, 201, 0.404)'),
+       borderTop: item.parent_id === null  && '1px solid white'
        }"
     >
       <v-btn
